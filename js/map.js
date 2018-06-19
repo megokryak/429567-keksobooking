@@ -10,6 +10,7 @@ var adFeatures = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'condit
 var adPhotos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var listPin = document.querySelector('.map__pins');
 var listMap = document.querySelector('.map');
+var map = document.querySelector('.map__pin--main'); // обработка события активации страницы
 
 var getRandomArray = function (arr) {
   var j;
@@ -141,7 +142,31 @@ var getSimilarDescTemplate = function (templateDesc, arrayTemplateDesc, listDesc
   }
 };
 
-getSimilarArray(COL_ELEMENT_ARRAY);
-document.querySelector('.map').classList.remove('map--faded');
-getSimilarTemplate(document.querySelector('template'), similarAds, listPin);
-getSimilarDescTemplate(document.querySelector('template'), similarAds, listMap);
+var getPositionPin = function () {
+  var positionX = parseInt(map.style.left, 10) + 65/2;
+  var positionY = parseInt(map.style.top, 10) + 65 + 22;
+  document.querySelector('#address').value = positionX + ', ' + positionY;
+};
+
+// ==========События=========== //
+// Собите активации карты
+var activationMapHandler = function () {
+  var formActivation = document.querySelector('form.ad-form');
+  var formActivationFieldsets = formActivation.querySelectorAll('fieldset');
+  document.querySelector('.map').classList.remove('map--faded');
+  formActivation.classList.remove('ad-form--disabled');
+  for (var m = 0; m < formActivationFieldsets.length; m++) {
+    formActivationFieldsets[m].removeAttribute('disabled');
+  };
+  getPositionPin();
+  getSimilarArray(COL_ELEMENT_ARRAY);
+  getSimilarTemplate(document.querySelector('template'), similarAds, listPin);
+  //getSimilarDescTemplate(document.querySelector('template'), similarAds, listMap);
+  var mapPinElement = document.querySelectorAll('.map__pin');
+};
+
+
+
+
+// События
+map.addEventListener('mouseup', activationMapHandler);
