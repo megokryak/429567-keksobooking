@@ -149,6 +149,10 @@ var getPositionPin = function () {
 };
 
 // ==========События=========== //
+// Событие вывода инфорамации
+var getInfoAdHandler = function (evt) {
+ console.log(evt);
+};
 // Собите активации карты
 var activationMapHandler = function () {
   var formActivation = document.querySelector('form.ad-form');
@@ -163,6 +167,9 @@ var activationMapHandler = function () {
   getSimilarTemplate(document.querySelector('template'), similarAds, listPin);
   //getSimilarDescTemplate(document.querySelector('template'), similarAds, listMap);
   var mapPinElement = document.querySelectorAll('.map__pin');
+  for (var z = 1; z < mapPinElement.length; z++) {
+    mapPinElement[z].addEventListener('click', getInfoAdHandler);
+  };
 };
 
 
