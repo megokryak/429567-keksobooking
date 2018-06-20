@@ -123,26 +123,6 @@ var getAllFeatures = function (templateForFeatures, arrayFeatures) {
   }
 };
 
-/* var getSimilarDescTemplate = function (templateDesc, arrayTemplateDesc, listDesc) {
-  var mapDesc = templateDesc.content.querySelector('.map__card');
-  var typeAd;
-  for (var l = 0; l < arrayTemplateDesc.length; l++) {
-    var templateDescription = mapDesc.cloneNode(true);
-    templateDescription.querySelector('.popup__title').textContent = arrayTemplateDesc[l].offer.title;
-    templateDescription.querySelector('.popup__text--address').textContent = arrayTemplateDesc[l].offer.address;
-    templateDescription.querySelector('.popup__text--price').textContent = arrayTemplateDesc[l].offer.price + ' р/ночь';
-    typeAd = getTypeRoom(arrayTemplateDesc[l].offer.type);
-    templateDescription.querySelector('.popup__type').textContent = typeAd;
-    templateDescription.querySelector('.popup__text--capacity').textContent = arrayTemplateDesc[l].offer.rooms + ' комнаты для ' + arrayTemplateDesc[l].offer.guests + ' гостей';
-    templateDescription.querySelector('.popup__text--time').textContent = 'Заезд после ' + arrayTemplateDesc[l].offer.checkin + ', выезд до ' + arrayTemplateDesc[l].offer.checkout;
-    templateDescription.querySelector('.popup__description').textContent = arrayTemplateDesc[l].offer.description;
-    getOtherPhoto(templateDescription, arrayTemplateDesc[l].offer.photos);
-    getAllFeatures(templateDescription, arrayTemplateDesc[l].offer.features);
-    templateDescription.querySelector('.popup__avatar').src = arrayTemplateDesc[l].author.avatar;
-    listDesc.appendChild(templateDescription);
-  }
-};*/
-
 var getSimilarDescTemplateOnce = function (templateDesc, arrayTemplateDesc, listDesc) {
   var mapDesc = templateDesc.content.querySelector('.map__card');
   var typeAd;
@@ -194,11 +174,6 @@ var activationMapHandler = function () {
     getSimilarArray(COL_ELEMENT_ARRAY);
     getSimilarTemplate(document.querySelector('template'), similarAds, listPin);
   }
-  // getSimilarDescTemplate(document.querySelector('template'), similarAds, listMap);
-  // var mapPinElement = document.querySelectorAll('.map__pin');
-  // for (var z = 1; z < mapPinElement.length; z++) {
-  // mapPinElement[z].addEventListener('click', getInfoAdHandler);
-  // };
   listPin.addEventListener('click', getInfoAdHandler, true);
 };
 
