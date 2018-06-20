@@ -143,7 +143,7 @@ var getSimilarDescTemplateOnce = function (templateDesc, arrayTemplateDesc, list
 
 var getPositionPin = function () {
   var positionX = parseInt(map.style.left, 10) + WIDTH_PIN / 2;
-  var positionY = parseInt(map.style.top, 10) + HEIGHT_PIN + HEIGTH_SHARP_END
+  var positionY = parseInt(map.style.top, 10) + HEIGHT_PIN + HEIGTH_SHARP_END;
   document.querySelector('#address').value = positionX + ', ' + positionY;
 };
 
