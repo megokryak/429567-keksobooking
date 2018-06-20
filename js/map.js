@@ -11,6 +11,7 @@ var adPhotos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0
 var listPin = document.querySelector('.map__pins');
 var listMap = document.querySelector('.map');
 var map = document.querySelector('.map__pin--main'); // обработка события активации страницы
+var flag = false; // Флаг использую, чтобы повторно не отрисовывать карту
 
 var getRandomArray = function (arr) {
   var j;
@@ -122,7 +123,7 @@ var getAllFeatures = function (templateForFeatures, arrayFeatures) {
   }
 };
 
-var getSimilarDescTemplate = function (templateDesc, arrayTemplateDesc, listDesc) {
+/* var getSimilarDescTemplate = function (templateDesc, arrayTemplateDesc, listDesc) {
   var mapDesc = templateDesc.content.querySelector('.map__card');
   var typeAd;
   for (var l = 0; l < arrayTemplateDesc.length; l++) {
@@ -140,40 +141,66 @@ var getSimilarDescTemplate = function (templateDesc, arrayTemplateDesc, listDesc
     templateDescription.querySelector('.popup__avatar').src = arrayTemplateDesc[l].author.avatar;
     listDesc.appendChild(templateDescription);
   }
+};*/
+
+var getSimilarDescTemplateOnce = function (templateDesc, arrayTemplateDesc, listDesc) {
+  var mapDesc = templateDesc.content.querySelector('.map__card');
+  var typeAd;
+  var templateDescription = mapDesc.cloneNode(true);
+  templateDescription.querySelector('.popup__title').textContent = arrayTemplateDesc.offer.title;
+  templateDescription.querySelector('.popup__text--address').textContent = arrayTemplateDesc.offer.address;
+  templateDescription.querySelector('.popup__text--price').textContent = arrayTemplateDesc.offer.price + ' р/ночь';
+  typeAd = getTypeRoom(arrayTemplateDesc.offer.type);
+  templateDescription.querySelector('.popup__type').textContent = typeAd;
+  templateDescription.querySelector('.popup__text--capacity').textContent = arrayTemplateDesc.offer.rooms + ' комнаты для ' + arrayTemplateDesc.offer.guests + ' гостей';
+  templateDescription.querySelector('.popup__text--time').textContent = 'Заезд после ' + arrayTemplateDesc.offer.checkin + ', выезд до ' + arrayTemplateDesc.offer.checkout;
+  templateDescription.querySelector('.popup__description').textContent = arrayTemplateDesc.offer.description;
+  getOtherPhoto(templateDescription, arrayTemplateDesc.offer.photos);
+  getAllFeatures(templateDescription, arrayTemplateDesc.offer.features);
+  templateDescription.querySelector('.popup__avatar').src = arrayTemplateDesc.author.avatar;
+  listDesc.appendChild(templateDescription);
 };
 
 var getPositionPin = function () {
-  var positionX = parseInt(map.style.left, 10) + 65/2;
+  var positionX = parseInt(map.style.left, 10) + 65 / 2;
   var positionY = parseInt(map.style.top, 10) + 65 + 22;
   document.querySelector('#address').value = positionX + ', ' + positionY;
 };
 
 // ==========События=========== //
 // Событие вывода инфорамации
-var getInfoAdHandler = function (evt) {
- console.log(evt);
+var getInfoAdHandler = function (clickEvt) {
+  if (clickEvt.target.className === 'map__pin') {
+    var srcImg = clickEvt.target.querySelector('img').getAttribute('src');
+    for (var p = 0; p < similarAds.length; p++) {
+      if (srcImg === similarAds[p].author.avatar) {
+        getSimilarDescTemplateOnce(document.querySelector('template'), similarAds[p], listMap);
+      }
+    }
+  }
 };
 // Собите активации карты
 var activationMapHandler = function () {
-  var formActivation = document.querySelector('form.ad-form');
-  var formActivationFieldsets = formActivation.querySelectorAll('fieldset');
-  document.querySelector('.map').classList.remove('map--faded');
-  formActivation.classList.remove('ad-form--disabled');
-  for (var m = 0; m < formActivationFieldsets.length; m++) {
-    formActivationFieldsets[m].removeAttribute('disabled');
-  };
-  getPositionPin();
-  getSimilarArray(COL_ELEMENT_ARRAY);
-  getSimilarTemplate(document.querySelector('template'), similarAds, listPin);
-  //getSimilarDescTemplate(document.querySelector('template'), similarAds, listMap);
-  var mapPinElement = document.querySelectorAll('.map__pin');
-  for (var z = 1; z < mapPinElement.length; z++) {
-    mapPinElement[z].addEventListener('click', getInfoAdHandler);
-  };
+  if (!flag) {
+    flag = true;
+    var formActivation = document.querySelector('form.ad-form');
+    var formActivationFieldsets = formActivation.querySelectorAll('fieldset');
+    document.querySelector('.map').classList.remove('map--faded');
+    formActivation.classList.remove('ad-form--disabled');
+    for (var m = 0; m < formActivationFieldsets.length; m++) {
+      formActivationFieldsets[m].removeAttribute('disabled');
+    }
+    getPositionPin();
+    getSimilarArray(COL_ELEMENT_ARRAY);
+    getSimilarTemplate(document.querySelector('template'), similarAds, listPin);
+  }
+  // getSimilarDescTemplate(document.querySelector('template'), similarAds, listMap);
+  // var mapPinElement = document.querySelectorAll('.map__pin');
+  // for (var z = 1; z < mapPinElement.length; z++) {
+  // mapPinElement[z].addEventListener('click', getInfoAdHandler);
+  // };
+  listPin.addEventListener('click', getInfoAdHandler, true);
 };
-
-
-
 
 // События
 map.addEventListener('mouseup', activationMapHandler);
