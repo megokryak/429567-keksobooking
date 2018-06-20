@@ -1,5 +1,8 @@
 'use strict';
 var COL_ELEMENT_ARRAY = 8;
+var WIDTH_PIN = 65;
+var HEIGHT_PIN = 65;
+var HEIGTH_SHARP_END = 22;
 
 var similarAds = [];
 var adTitle = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
@@ -11,18 +14,17 @@ var adPhotos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0
 var listPin = document.querySelector('.map__pins');
 var listMap = document.querySelector('.map');
 var map = document.querySelector('.map__pin--main'); // обработка события активации страницы
-var flag = false; // Флаг использую, чтобы повторно не отрисовывать карту
+var flagValidPictureMap = false; // Флаг использую, чтобы повторно не отрисовывать карту
 
 var getRandomArray = function (arr) {
-  var j;
-  var temp;
-  for (var k = arr.length - 1; k > 0; k--) {
-    j = Math.floor(Math.random() * (k + 1));
-    temp = arr[j];
-    arr[j] = arr[k];
-    arr[k] = temp;
+  var newArr = arr.slice(0);
+  for (var k = newArr.length - 1; k > 0; k--) {
+    var j = Math.floor(Math.random() * (k + 1));
+    var temp = newArr[k];
+    newArr[k] = newArr[j];
+    newArr[j] = temp;
   }
-  return arr;
+  return newArr;
 };
 
 var getLineRandom = function (arrLine) {
@@ -36,12 +38,10 @@ var getLineRandom = function (arrLine) {
 };
 
 var getSimilarArray = function (colElementArray) {
-  var randomArrayFeatures = getRandomArray(adFeatures);
-  var lineFuetures = getLineRandom(randomArrayFeatures);
-  var randomArrayPhotos = getRandomArray(adPhotos);
-
-
   for (var i = 0; i < colElementArray; i++) {
+    var randomArrayFeatures = getRandomArray(adFeatures);
+    var lineFuetures = getLineRandom(randomArrayFeatures);
+    var randomArrayPhotos = getRandomArray(adPhotos);
     var locationX = Math.floor(Math.random() * (900 - 300) + 300);
     var locationY = Math.floor(Math.random() * (630 - 130) + 130);
     var element = i + 1;
@@ -142,8 +142,8 @@ var getSimilarDescTemplateOnce = function (templateDesc, arrayTemplateDesc, list
 };
 
 var getPositionPin = function () {
-  var positionX = parseInt(map.style.left, 10) + 65 / 2;
-  var positionY = parseInt(map.style.top, 10) + 65 + 22;
+  var positionX = parseInt(map.style.left, 10) + WIDTH_PIN / 2;
+  var positionY = parseInt(map.style.top, 10) + HEIGHT_PIN + HEIGTH_SHARP_END
   document.querySelector('#address').value = positionX + ', ' + positionY;
 };
 
@@ -161,8 +161,8 @@ var getInfoAdHandler = function (clickEvt) {
 };
 // Собите активации карты
 var activationMapHandler = function () {
-  if (!flag) {
-    flag = true;
+  if (!flagValidPictureMap) {
+    flagValidPictureMap = true;
     var formActivation = document.querySelector('form.ad-form');
     var formActivationFieldsets = formActivation.querySelectorAll('fieldset');
     document.querySelector('.map').classList.remove('map--faded');
@@ -176,6 +176,9 @@ var activationMapHandler = function () {
   }
   listPin.addEventListener('click', getInfoAdHandler, true);
 };
+
+// ======= События валидности формы ====== //
+
 
 // События
 map.addEventListener('mouseup', activationMapHandler);
