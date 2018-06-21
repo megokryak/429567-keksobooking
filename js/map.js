@@ -15,6 +15,12 @@ var listPin = document.querySelector('.map__pins');
 var listMap = document.querySelector('.map');
 var map = document.querySelector('.map__pin--main'); // обработка события активации страницы
 var flagValidPictureMap = false; // Флаг использую, чтобы повторно не отрисовывать карту
+var optionType = document.querySelector('#type'); // измение при выборе типа жилья
+var timeArrival = document.querySelector('#timein');
+var timeCheckOut = document.querySelector('#timeout');
+var roomNumber = document.querySelector('#room_number');
+var colGuests = document.querySelector('#capacity');
+var formActivation = document.querySelector('form.ad-form');
 
 var getRandomArray = function (arr) {
   var newArr = arr.slice(0);
@@ -163,7 +169,6 @@ var getInfoAdHandler = function (clickEvt) {
 var activationMapHandler = function () {
   if (!flagValidPictureMap) {
     flagValidPictureMap = true;
-    var formActivation = document.querySelector('form.ad-form');
     var formActivationFieldsets = formActivation.querySelectorAll('fieldset');
     document.querySelector('.map').classList.remove('map--faded');
     formActivation.classList.remove('ad-form--disabled');
@@ -178,7 +183,54 @@ var activationMapHandler = function () {
 };
 
 // ======= События валидности формы ====== //
+var getValidOption = function () {
+  var optionElement = document.querySelector('select#type');
+  var optionSelectedIndex = optionElement.options.selectedIndex;
+  var optionSelectedValue = optionElement.options[optionSelectedIndex].value;
+  var priceRoom = document.querySelector('#price');
+  if (optionSelectedValue === 'bungalo') {
+    priceRoom.placeholder = '0';
+    priceRoom.min = '0';
+  } else if (optionSelectedValue === 'house') {
+    priceRoom.placeholder = '5000';
+    priceRoom.min = '5000';
+  } else if (optionSelectedValue === 'flat') {
+    priceRoom.placeholder = '1000';
+    priceRoom.min = '1000';
+  } else if (optionSelectedValue === 'palace') {
+    priceRoom.placeholder = '10000';
+    priceRoom.min = '10000';
+  }
+};
 
+var getValidTime = function (timeEvt) {
+  var timeElement = timeEvt.target.id;
+  var timeElementIndex = timeEvt.target.options.selectedIndex;
+  if (timeElement === 'timein') {
+    timeCheckOut.options.selectedIndex = timeElementIndex;
+  } else {
+    timeArrival.options.selectedIndex = timeElementIndex;
+  }
+};
+
+var getValidColGuests = function () {
+  colGuests.setCustomValidity('');
+  var valueRoom = parseInt(roomNumber.options[roomNumber.options.selectedIndex].value, 10);
+  var colSelectedGuest = parseInt(colGuests.options[colGuests.options.selectedIndex].value, 10);
+  if (valueRoom === 100 && colSelectedGuest !== 0) {
+    colGuests.setCustomValidity('Для выбранного варианта нельзя приглашать');
+  }
+  if (valueRoom < colSelectedGuest) {
+    colGuests.setCustomValidity('Для ' + valueRoom + ' комнат(ы) можно пригласить не более ' + valueRoom + ' гостей');
+  }
+  if (valueRoom !== 100 && colSelectedGuest === 0) {
+    colGuests.setCustomValidity('Выберите кол-во гостей, так как этот вариант только для 100 комнат');
+  }
+};
 
 // События
 map.addEventListener('mouseup', activationMapHandler);
+optionType.addEventListener('change', getValidOption);
+timeArrival.addEventListener('change', getValidTime);
+timeCheckOut.addEventListener('change', getValidTime);
+formActivation.addEventListener('change', getValidColGuests);
