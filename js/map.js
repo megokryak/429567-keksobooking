@@ -2,7 +2,25 @@
 var COL_ELEMENT_ARRAY = 8;
 var WIDTH_PIN = 65;
 var HEIGHT_PIN = 65;
+var WIDTH_PIN_ADS = 50;
+var HEIGHT_PIN_ADS = 70;
 var HEIGTH_SHARP_END = 22;
+var MAX_LOCATION_X = 900;
+var MIN_LOCATION_X = 300;
+var MAX_LOCATION_Y = 630;
+var MIN_LOCATION_Y = 130;
+var MAX_PRICE = 1000000;
+var MIN_PRICE = 1000;
+var MAX_ROOMS = 5;
+var MIN_ROOMS = 1;
+var MAX_GUESTS = 5;
+var MIN_GUESTS = 1;
+var MIN_PRICE_BUNGALO = 0;
+var MIN_PRICE_HOUSE = 5000;
+var MIN_PRICE_FLAT = 1000;
+var MIN_PRICE_PALACE = 10000;
+var VALID_PALACE = 100;
+var NOT_GUESTS = 0;
 
 var similarAds = [];
 var adTitle = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
@@ -48,8 +66,8 @@ var getSimilarArray = function (colElementArray) {
     var randomArrayFeatures = getRandomArray(adFeatures);
     var lineFuetures = getLineRandom(randomArrayFeatures);
     var randomArrayPhotos = getRandomArray(adPhotos);
-    var locationX = Math.floor(Math.random() * (900 - 300) + 300);
-    var locationY = Math.floor(Math.random() * (630 - 130) + 130);
+    var locationX = Math.floor(Math.random() * (MAX_LOCATION_X - MIN_LOCATION_X) + MIN_LOCATION_X);
+    var locationY = Math.floor(Math.random() * (MAX_LOCATION_Y - MIN_LOCATION_Y) + MIN_LOCATION_Y);
     var element = i + 1;
     similarAds[i] = {
       author: {
@@ -58,12 +76,12 @@ var getSimilarArray = function (colElementArray) {
       offer: {
         title: adTitle[i],
         address: locationX + ', ' + locationY,
-        price: Math.floor(Math.random() * (1000000 - 1000) + 1000),
-        type: adType[Math.floor(Math.random() * 3)],
-        rooms: Math.floor(Math.random() * (5 - 1) + 1),
-        guests: Math.floor(Math.random() * (5 - 1) + 1),
-        checkin: adCheckin[Math.floor(Math.random() * 2)],
-        checkout: adCheckout[Math.floor(Math.random() * 2)],
+        price: Math.floor(Math.random() * (MAX_PRICE - MIN_PRICE) + MIN_PRICE),
+        type: adType[Math.floor(Math.random() * (adType.length - 1))],
+        rooms: Math.floor(Math.random() * (MAX_ROOMS - MIN_ROOMS) + MIN_ROOMS),
+        guests: Math.floor(Math.random() * (MAX_GUESTS - MIN_GUESTS) + MIN_GUESTS),
+        checkin: adCheckin[Math.floor(Math.random() * (adCheckin.length - 1))],
+        checkout: adCheckout[Math.floor(Math.random() * (adCheckout - 1))],
         features: lineFuetures,
         description: '',
         photos: randomArrayPhotos
@@ -80,8 +98,8 @@ var getSimilarTemplate = function (template, arrayTemplate, list) {
   var mapPin = template.content.querySelector('.map__pin');
   for (var o = 0; o < arrayTemplate.length; o++) {
     var templateMapPin = mapPin.cloneNode(true);
-    templateMapPin.style.left = arrayTemplate[o].location.x - 25 + 'px';
-    templateMapPin.style.top = arrayTemplate[o].location.y - 70 + 'px';
+    templateMapPin.style.left = arrayTemplate[o].location.x - WIDTH_PIN_ADS / 2 + 'px';
+    templateMapPin.style.top = arrayTemplate[o].location.y - HEIGHT_PIN_ADS + 'px';
     templateMapPin.firstElementChild.src = arrayTemplate[o].author.avatar;
     templateMapPin.firstElementChild.alt = arrayTemplate[o].offer.title;
     list.appendChild(templateMapPin);
@@ -189,17 +207,17 @@ var getValidOption = function () {
   var optionSelectedValue = optionElement.options[optionSelectedIndex].value;
   var priceRoom = document.querySelector('#price');
   if (optionSelectedValue === 'bungalo') {
-    priceRoom.placeholder = '0';
-    priceRoom.min = '0';
+    priceRoom.placeholder = MIN_PRICE_BUNGALO;
+    priceRoom.min = MIN_PRICE_BUNGALO;
   } else if (optionSelectedValue === 'house') {
-    priceRoom.placeholder = '5000';
-    priceRoom.min = '5000';
+    priceRoom.placeholder = MIN_PRICE_HOUSE;
+    priceRoom.min = MIN_PRICE_HOUSE;
   } else if (optionSelectedValue === 'flat') {
-    priceRoom.placeholder = '1000';
-    priceRoom.min = '1000';
+    priceRoom.placeholder = MIN_PRICE_FLAT;
+    priceRoom.min = MIN_PRICE_FLAT;
   } else if (optionSelectedValue === 'palace') {
-    priceRoom.placeholder = '10000';
-    priceRoom.min = '10000';
+    priceRoom.placeholder = MIN_PRICE_PALACE;
+    priceRoom.min = MIN_PRICE_PALACE;
   }
 };
 
@@ -217,13 +235,13 @@ var getValidColGuests = function () {
   colGuests.setCustomValidity('');
   var valueRoom = parseInt(roomNumber.options[roomNumber.options.selectedIndex].value, 10);
   var colSelectedGuest = parseInt(colGuests.options[colGuests.options.selectedIndex].value, 10);
-  if (valueRoom === 100 && colSelectedGuest !== 0) {
-    colGuests.setCustomValidity('Для выбранного варианта нельзя приглашать');
+  if (valueRoom === VALID_PALACE && colSelectedGuest !== NOT_GUESTS) {
+    colGuests.setCustomValidity('Для выбранного варианта нельзя приглашать гостей');
   }
   if (valueRoom < colSelectedGuest) {
     colGuests.setCustomValidity('Для ' + valueRoom + ' комнат(ы) можно пригласить не более ' + valueRoom + ' гостей');
   }
-  if (valueRoom !== 100 && colSelectedGuest === 0) {
+  if (valueRoom !== VALID_PALACE && colSelectedGuest === NOT_GUESTS) {
     colGuests.setCustomValidity('Выберите кол-во гостей, так как этот вариант только для 100 комнат');
   }
 };
