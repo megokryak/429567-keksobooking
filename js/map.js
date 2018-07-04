@@ -183,22 +183,6 @@ var getInfoAdHandler = function (clickEvt) {
     }
   }
 };
-// Собите активации карты
-var activationMapHandler = function () {
-  if (!flagValidPictureMap) {
-    flagValidPictureMap = true;
-    var formActivationFieldsets = formActivation.querySelectorAll('fieldset');
-    document.querySelector('.map').classList.remove('map--faded');
-    formActivation.classList.remove('ad-form--disabled');
-    for (var m = 0; m < formActivationFieldsets.length; m++) {
-      formActivationFieldsets[m].removeAttribute('disabled');
-    }
-    getPositionPin();
-    getSimilarArray(COL_ELEMENT_ARRAY);
-    getSimilarTemplate(document.querySelector('template'), similarAds, listPin);
-  }
-  listPin.addEventListener('click', getInfoAdHandler, true);
-};
 
 // ======= События валидности формы ====== //
 var getValidOption = function () {
@@ -246,8 +230,69 @@ var getValidColGuests = function () {
   }
 };
 
+var mapMouseDownHandle = function (mouseDownEvt) {
+  mouseDownEvt.preventDefault();
+  var startCoordinates = {
+    x: mouseDownEvt.clientX,
+    y: mouseDownEvt.clientY
+  };
+  var flagMove = false;
+
+  var mapMouseMoveHandle = function (mouseMoveEvt) {
+    flagMove = true;
+    document.querySelector('.map').classList.remove('map--faded');
+    formActivation.classList.remove('ad-form--disabled');
+    var endCoordinates = {
+      x: startCoordinates.x - mouseMoveEvt.clientX,
+      y: startCoordinates.y - mouseMoveEvt.clientY
+    };
+    var coordinatYLimit = map.offsetTop + HEIGHT_PIN + HEIGTH_SHARP_END - endCoordinates.y;
+    var coordinatXLimit = map.offsetLeft - endCoordinates.x;
+    if (coordinatYLimit < MIN_LOCATION_Y) {
+      map.style.top = (MIN_LOCATION_Y - HEIGHT_PIN - HEIGTH_SHARP_END) + 'px';
+    } else if (coordinatYLimit > MAX_LOCATION_Y) {
+      map.style.top = (MAX_LOCATION_Y - HEIGHT_PIN - HEIGTH_SHARP_END) + 'px';
+    } else {
+      map.style.top = (map.offsetTop - endCoordinates.y) + 'px';
+    }
+    if (coordinatXLimit <= 0) {
+      map.style.left = 0 + 'px';
+    } else if (coordinatXLimit + WIDTH_PIN >= listMap.offsetWidth) {
+      map.style.left = coordinatXLimit + WIDTH_PIN;
+    } else {
+      map.style.left = (coordinatXLimit) + 'px';
+    }
+    startCoordinates.x = mouseMoveEvt.clientX;
+    startCoordinates.y = mouseMoveEvt.clientY;
+
+  };
+
+  // Собите активации карты
+  var mapMouseUoHandler = function () {
+    if (!flagValidPictureMap) {
+      flagValidPictureMap = true;
+      if (!flagMove) {
+        document.querySelector('.map').classList.remove('map--faded');
+        formActivation.classList.remove('ad-form--disabled');
+      }
+      var formActivationFieldsets = formActivation.querySelectorAll('fieldset');
+      for (var m = 0; m < formActivationFieldsets.length; m++) {
+        formActivationFieldsets[m].removeAttribute('disabled');
+      }
+      getPositionPin();
+      getSimilarArray(COL_ELEMENT_ARRAY);
+      getSimilarTemplate(document.querySelector('template'), similarAds, listPin);
+    }
+    listPin.addEventListener('click', getInfoAdHandler, true);
+    map.removeEventListener('mousemove', mapMouseMoveHandle);
+    map.removeEventListener('mouseup', mapMouseUoHandler);
+  };
+  map.addEventListener('mousemove', mapMouseMoveHandle);
+  map.addEventListener('mouseup', mapMouseUoHandler);
+};
+
 // События
-map.addEventListener('mouseup', activationMapHandler);
+map.addEventListener('mousedown', mapMouseDownHandle);
 optionType.addEventListener('change', getValidOption);
 timeArrival.addEventListener('change', getValidTime);
 timeCheckOut.addEventListener('change', getValidTime);
