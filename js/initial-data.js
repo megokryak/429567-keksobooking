@@ -1,0 +1,28 @@
+'use strict';
+(function () {
+  window.initialData = {
+    COL_ELEMENT_ARRAY: 8,
+    WIDTH_PIN: 65,
+    HEIGHT_PIN: 65,
+    WIDTH_PIN_ADS: 50,
+    HEIGHT_PIN_ADS: 70,
+    HEIGTH_SHARP_END: 22,
+    MAX_LOCATION_X: 900,
+    MIN_LOCATION_X: 300,
+    MAX_LOCATION_Y: 630,
+    MIN_LOCATION_Y: 130,
+    MAX_PRICE: 1000000,
+    MIN_PRICE: 1000,
+    MAX_ROOMS: 5,
+    MIN_ROOMS: 1,
+    MAX_GUESTS: 5,
+    MIN_GUESTS: 1,
+    MIN_PRICE_BUNGALO: 0,
+    MIN_PRICE_HOUSE: 5000,
+    MIN_PRICE_FLAT: 1000,
+    MIN_PRICE_PALACE: 10000,
+    VALID_PALACE: 100,
+    NOT_GUESTS: 0
+  };
+
+})();
