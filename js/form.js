@@ -54,8 +54,43 @@
       colGuests.setCustomValidity('Выберите кол-во гостей, так как этот вариант только для 100 комнат');
     }
   };
+
+  var formSubmitHandle = function () {
+    document.querySelector('#title').value = '';
+    document.querySelector('#price').value = '';
+    document.querySelector('#description').value = '';
+    document.querySelector('#address').value = '0, 0';
+    document.querySelector('#room_number').selectedIndex = 0;
+    document.querySelector('#type').selectedIndex = 1;
+    document.querySelector('#capacity').selectedIndex = 0;
+    document.querySelector('#timein').selectedIndex = 0;
+    document.querySelector('#timeout').selectedIndex = 1;
+    document.querySelector('#feature-wifi').checked = false;
+    document.querySelector('#feature-dishwasher').checked = false;
+    document.querySelector('#feature-parking').checked = false;
+    document.querySelector('#feature-washer').checked = false;
+    document.querySelector('#feature-elevator').checked = false;
+    document.querySelector('#feature-conditioner').checked = false;
+  };
+
+  var errorHandle = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
   optionType.addEventListener('change', getValidOption);
   timeArrival.addEventListener('change', getValidTime);
   timeCheckOut.addEventListener('change', getValidTime);
   formActivation.addEventListener('change', getValidColGuests);
+  formActivation.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(formActivation), formSubmitHandle, errorHandle);
+  });
 })();
