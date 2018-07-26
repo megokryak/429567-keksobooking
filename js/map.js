@@ -4,7 +4,6 @@ var listMap = document.querySelector('.map');
 var map = document.querySelector('.map__pin--main'); // обработка события активации страницы
 var flagValidPictureMap = false; // Флаг использую, чтобы повторно не отрисовывать карту
 var formActivation = document.querySelector('form.ad-form');
-var mapFilter = document.querySelector('.map__filter');
 
 var mapMouseDownHandle = function (mouseDownEvt) {
   mouseDownEvt.preventDefault();
@@ -62,8 +61,11 @@ var mapMouseDownHandle = function (mouseDownEvt) {
 
   var successHandle = function (adsInfo) {
     window.similarAdsAll = adsInfo;
-    console.log(adsInfo);
     window.getSimilarTemplate(document.querySelector('template'), window.similarAdsAll, listPin);
+  };
+
+  var filterTypeChangeHandle = function (changeEvt) {
+    console.log(changeEvt);
   };
 
   // Собите активации карты
@@ -86,8 +88,9 @@ var mapMouseDownHandle = function (mouseDownEvt) {
   };
   map.addEventListener('mousemove', mapMouseMoveHandle);
   map.addEventListener('mouseup', mapMouseUoHandler);
+  var filterType = document.querySelector('#housing-type');
+  filterType.addEventListener('change', filterTypeChangeHandle);
 };
 
 // События
 map.addEventListener('mousedown', mapMouseDownHandle);
-
