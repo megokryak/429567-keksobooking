@@ -65,7 +65,8 @@ var mapMouseDownHandle = function (mouseDownEvt) {
   };
 
   var filterTypeChangeHandle = function (changeEvt) {
-    console.log(changeEvt);
+    var selectedEvt = changeEvt.target.options.selectedIndex;
+    var selectedElementValue = filterType.options[selectedEvt].value;
   };
 
   // Собите активации карты
